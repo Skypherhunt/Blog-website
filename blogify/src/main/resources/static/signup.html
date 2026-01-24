@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Blogify - Sign Up</title>
+    <style>
+     
+        :root {
+            --primary-green: #27ae60;
+            --primary-dark: #1e8449;
+            --secondary-light: #d5f5e3;
+            --white: #ffffff;
+            --gray-light: #f2f2f2;
+            --text-dark: #2c3e50;
+        }
+
+   
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--secondary-light);
+            color: var(--text-dark);
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: var(--primary-green);
+            padding: 15px 50px;
+        }
+
+        .navbar .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--white);
+        }
+
+        .navbar .nav-links a {
+            margin: 0 15px;
+            color: var(--white);
+            font-weight: 500;
+        }
+
+        .navbar .nav-links a:hover {
+            text-decoration: underline;
+        }
+
+        .signup-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 80vh;
+        }
+
+        .signup-box {
+            background-color: var(--white);
+            padding: 40px 50px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 450px;
+        }
+
+        .signup-box h2 {
+            text-align: center;
+            margin-bottom: 25px;
+            color: var(--primary-green);
+        }
+
+        .signup-box label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        .signup-box input {
+            width: 100%;
+            padding: 12px 15px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .signup-box input:focus {
+            border-color: var(--primary-green);
+            outline: none;
+        }
+
+        .signup-box button {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--primary-green);
+            color: var(--white);
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .signup-box button:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .signup-box .login-link {
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .signup-box .login-link a {
+            color: var(--primary-green);
+            font-weight: 500;
+        }
+
+        .signup-box .login-link a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="logo">Blogify</div>
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="blogs.html">Blogs</a>
+            <a href="about.html">About</a>
+            <a href="login.html">Login</a>
+        </div>
+    </nav>
+
+    <div class="signup-container">
+        <div class="signup-box">
+            <h2>Create Account</h2>
+            <form id="signupForm">
+                <label for="username">Username</label>
+                <input type="text" id="username" placeholder="Enter your username" required>
+
+                <label for="email">Email</label>
+                <input type="email" id="email" placeholder="Enter your email" required>
+
+                <label for="password">Password</label>
+                <input type="password" id="password" placeholder="Enter your password" required>
+
+                <label for="phone">Phone</label>
+                <input type="text" id="phone" placeholder="Enter your phone number" pattern="[0-9]{10}" required>
+
+                <button type="submit">Sign Up</button>
+            </form>
+
+            <div class="login-link">
+                Already have an account? <a href="login.html">Login here</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById("signupForm").addEventListener("submit", function(e) {
+            e.preventDefault();
+
+            const user = {
+                username: document.getElementById("username").value,
+                email: document.getElementById("email").value,
+                password: document.getElementById("password").value,
+                phone: document.getElementById("phone").value
+            };
+
+            fetch("/api/auth/signup", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(user)
+            })
+            .then(response => response.text())
+            .then(data => {
+	            alert(data);
+	            if (data === "Signup successful!") {
+	                window.location.href = "login.html";
+	            }
+	        })
+            .catch(error => console.error("Error:", error));
+        });
+    </script>
+</body>
+</html>

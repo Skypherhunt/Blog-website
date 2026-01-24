@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Blogify - My Blogs</title>
+    <style>
+        :root {
+		    --primary-green: #27ae60;
+		    --primary-dark: #1e8449;
+		    --secondary-light: #d5f5e3;
+		    --white: #ffffff;
+		    --gray-light: #f2f2f2;
+		    --text-dark: #2c3e50;
+		    --danger-red: #e74c3c;
+		}
+		
+		* {
+		    margin: 0;
+		    padding: 0;
+		    box-sizing: border-box;
+		    font-family: 'Segoe UI', sans-serif;
+		}
+		
+		body {
+		    background-color: var(--secondary-light);
+		    color: var(--text-dark);
+		}
+		
+		a {
+		    text-decoration: none;
+		    color: inherit;
+		}
+		
+		.navbar {
+		    display: flex;
+		    justify-content: space-between;
+		    align-items: center;
+		    background-color: var(--primary-green);
+		    padding: 15px 50px;
+		}
+		
+		.navbar .logo {
+		    font-size: 24px;
+		    font-weight: bold;
+		    color: var(--white);
+		}
+		
+		.navbar .nav-links a {
+		    margin: 0 15px;
+		    color: var(--white);
+		    font-weight: 500;
+		}
+		
+		.blogs-container {
+		    max-width: 1200px;
+		    margin: 40px auto;
+		    padding: 0 20px;
+		}
+		
+		.blogs-container h2 {
+		    color: var(--primary-green);
+		    margin-bottom: 25px;
+		}
+		
+		.blogs-grid {
+		    display: grid;
+		    grid-template-columns: repeat(3, 1fr);
+		    gap: 25px;
+		}
+		
+		.blog-card {
+		    background-color: var(--white);
+		    border-radius: 12px;
+		    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+		    overflow: hidden;
+		    display: flex;
+		    flex-direction: column;
+		}
+		
+		.blog-card img {
+		    width: 100%;
+		    height: 180px;
+		    object-fit: cover;
+		}
+		
+		.blog-card-content {
+		    padding: 20px;
+		    flex: 1;
+		    display: flex;
+		    flex-direction: column;
+		}
+		
+		.blog-card-content h3 {
+		    margin-bottom: 10px;
+		    color: var(--primary-green);
+		}
+		
+		.blog-card-content p {
+		    flex: 1;
+		    margin-bottom: 15px;
+		}
+		
+		.blog-actions {
+		    display: flex;
+		    gap: 10px;
+		    margin-top: auto;
+		}
+		
+		.blog-actions .btn {
+		    padding: 8px 15px;
+		    border-radius: 8px;
+		    font-weight: bold;
+		    color: var(--white);
+		    border: none;
+		    cursor: pointer;
+		}
+		
+		.btn.edit {
+		    background-color: var(--primary-green);
+		}
+		
+		.btn.edit:hover {
+		    background-color: var(--primary-dark);
+		}
+		
+		.btn.delete {
+		    background-color: var(--danger-red);
+		}
+		
+		.profile-dropdown {
+		    position: relative;
+		    display: inline-block;
+		}
+		
+		.profile-dropdown-content {
+		    display: none;
+		    position: absolute;
+		    right: 0;
+		    background-color: #f9f9f9;
+		    min-width: 160px;
+		    box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
+		    z-index: 1;
+		}
+		
+		.nav-links .profile-dropdown-content a {
+		    color: var(--primary-green);
+		    padding: 12px 16px;
+		    display: block;
+		}
+		
+		.profile-dropdown:hover .profile-dropdown-content {
+		    display: block;
+		}
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">Blogify</div>
+        <div class="nav-links" id="navLinks"></div>
+    </nav>
+
+    <div class="blogs-container">
+        <h2>My Blogs</h2>
+        <div class="blogs-grid" id="blogsGrid">
+            </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const blogsGrid = document.getElementById("blogsGrid");
+            const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+
+            if (!currentUser) {
+                alert("Please log in to see your blogs.");
+                window.location.href = "login.html";
+                return;
+            }
+
+            fetch(`/api/blogs/user/${currentUser.userId}`)
+                .then(response => response.json())
+                .then(blogs => {
+                    blogsGrid.innerHTML = "";
+                    if (blogs.length === 0) {
+                        blogsGrid.innerHTML = "<p>You haven't written any blogs yet. <a href='write_blog.html'>Write one now!</a></p>";
+                        return;
+                    }
+                    blogs.forEach(blog => {
+                        const card = document.createElement("div");
+                        card.className = "blog-card";
+                        card.innerHTML = `
+                            <img src="${blog.imageUrl || 'https://via.placeholder.com/400x180?text=No+Image'}" alt="Blog Image">
+                            <div class="blog-card-content">
+                                <h3>${blog.title}</h3>
+                                <div class="blog-actions">
+                                    <a href="write_blog.html?editId=${blog.blogId}" class="btn edit">Edit</a>
+                                    <button class="btn delete" data-blog-id="${blog.blogId}">Delete</button>
+                                </div>
+                            </div>
+                        `;
+                        blogsGrid.appendChild(card);
+                    });
+                });
+            
+            blogsGrid.addEventListener('click', function(e) {
+                if (e.target && e.target.classList.contains('delete')) {
+                    const blogId = e.target.getAttribute('data-blog-id');
+                    if (confirm('Are you sure you want to delete this blog?')) {
+                        fetch(`/api/blogs/${blogId}`, { method: 'DELETE' })
+                            .then(response => {
+                                if (response.ok) {
+                                    e.target.closest('.blog-card').remove();
+                                } else {
+                                    alert('Failed to delete blog.');
+                                }
+                            });
+                    }
+                }
+            });
+        });
+    </script>
+    <script>
+	    document.addEventListener("DOMContentLoaded", function() {
+	        const navLinks = document.getElementById("navLinks");
+	        const currentUserJSON = localStorage.getItem("currentUser");
+	        let navHTML = `
+	            <a href="index.html">Home</a>
+	            <a href="blogs.html">Blogs</a>
+	            <a href="about.html">About</a>`;
+	
+	        if (currentUserJSON) {
+	            const user = JSON.parse(currentUserJSON);
+	            navHTML += `
+	                <div class="profile-dropdown">
+	                    <a href="#" class="profile-btn">Profile &#9662;</a>
+	                    <div class="profile-dropdown-content">
+	                        <a href="my_blogs.html">My Blogs</a>
+	                        <a href="write_blog.html">Write</a>
+	                        <a href="#" id="logoutBtn">Logout</a>
+	                    </div>
+	                </div>
+	            `;
+	        } else {
+	            navHTML += `
+	                <a href="login.html">Login</a>
+	                <a href="signup.html">Sign Up</a>
+	            `;
+	        }
+	
+	        navLinks.innerHTML = navHTML;
+	        const logoutBtn = document.getElementById("logoutBtn");
+	        if (logoutBtn) {
+	            logoutBtn.addEventListener("click", function(e) {
+	                e.preventDefault();
+	                localStorage.removeItem("currentUser");
+	                window.location.href = "login.html";
+	            });
+	        }
+	    });
+	</script>
+</body>
+</html>

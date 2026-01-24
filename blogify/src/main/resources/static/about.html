@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Blogify - About</title>
+    <style>
+
+        :root {
+            --primary-green: #27ae60;
+            --primary-dark: #1e8449;
+            --secondary-light: #d5f5e3;
+            --white: #ffffff;
+            --text-dark: #2c3e50;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--secondary-light);
+            color: var(--text-dark);
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: var(--primary-green);
+            padding: 15px 50px;
+        }
+
+        .navbar .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--white);
+        }
+
+        .navbar .nav-links a {
+            margin: 0 15px;
+            color: var(--white);
+            font-weight: 500;
+        }
+
+        .navbar .nav-links a:hover {
+            text-decoration: underline;
+        }
+
+        .about-container {
+            max-width: 900px;
+            margin: 50px auto;
+            padding: 0 20px;
+            background-color: var(--white);
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            padding: 40px;
+        }
+
+        .about-container h1 {
+            color: var(--primary-green);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .about-container p {
+            line-height: 1.7;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+        
+		.profile-dropdown {
+		    position: relative;
+		    display: inline-block;
+		}
+		
+		.profile-dropdown-content {
+		    display: none;
+		    position: absolute;
+		    right: 0;
+		    background-color: #f9f9f9;
+		    min-width: 160px;
+		    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+		    z-index: 1;
+		}
+		
+		.nav-links .profile-dropdown-content a {
+		    color: var(--primary-green);
+		    padding: 12px 16px;
+		    text-decoration: none;
+		    display: block;
+		}
+		
+		.profile-dropdown-content a:hover {
+		    background-color: #f1f1f1;
+		}
+		
+		.profile-dropdown:hover .profile-dropdown-content {
+		    display: block;
+		}
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="logo">Blogify</div>
+        <div class="nav-links" id="navLinks">
+    	</div>
+    </nav>
+
+    <div class="about-container">
+        <h1>About Blogify</h1>
+        <p>Welcome to Blogify, a modern platform founded by Ayush and Abhinav, built with a simple mission - to make blogging smarter, simpler, and more impactful. At Blogify, we believe that every voice deserves a platform that's powerful yet easy to use. Whether you're a passionate writer, a curious reader, or someone who simply loves to share ideas, Blogify offers everything you need - from a clean, distraction-free writing interface to customizable themes, rich media support, and intelligent analytics to track your growth.</p>
+        <p>Our goal is to help creators focus on what truly matters - their stories. Blogify blends creativity with technology, offering seamless publishing tools, SEO optimization, and an interactive community that encourages meaningful conversations.</p>
+        <p>With Blogify, your words don't just stay on a page - they build connections, inspire change, and reach audiences across the world.</p>
+    </div>
+	
+	<script>
+	    document.addEventListener("DOMContentLoaded", function() {
+	        const navLinks = document.getElementById("navLinks");
+	        const currentUserJSON = localStorage.getItem("currentUser");
+	
+	        let navHTML = `
+	            <a href="index.html">Home</a>
+	            <a href="blogs.html">Blogs</a>
+	            <a href="about.html">About</a>
+	        `;
+	
+	        if (currentUserJSON) {
+	            const user = JSON.parse(currentUserJSON);
+	            navHTML += `
+	                <div class="profile-dropdown">
+	                    <a href="#" class="profile-btn">Profile &#9662;</a>
+	                    <div class="profile-dropdown-content">
+	                        <a href="my_blogs.html">My Blogs</a>
+	                        <a href="write_blog.html">Write</a>
+	                        <a href="#" id="logoutBtn">Logout</a>
+	                    </div>
+	                </div>
+	            `;
+	        } else {
+	            navHTML += `
+	                <a href="login.html">Login</a>
+	                <a href="signup.html">Sign Up</a>
+	            `;
+	        }
+	
+	        navLinks.innerHTML = navHTML;
+	
+	        const logoutBtn = document.getElementById("logoutBtn");
+	        if (logoutBtn) {
+	            logoutBtn.addEventListener("click", function(e) {
+	                e.preventDefault();
+	                localStorage.removeItem("currentUser");
+	                window.location.href = "login.html";
+	            });
+	        }
+	    });
+	</script>
+</body>
+</html>

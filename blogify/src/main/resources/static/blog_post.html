@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Blogify - Post</title>
+    <style>
+    
+        :root {
+            --primary-green: #27ae60;
+            --primary-dark: #1e8449;
+            --secondary-light: #d5f5e3;
+            --white: #ffffff;
+            --gray-light: #f2f2f2;
+            --text-dark: #2c3e50;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--secondary-light);
+            color: var(--text-dark);
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+        
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: var(--primary-green);
+            padding: 15px 50px;
+        }
+
+        .navbar .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--white);
+        }
+
+        .navbar .nav-links a {
+            margin: 0 15px;
+            color: var(--white);
+            font-weight: 500;
+        }
+
+        .navbar .nav-links a:hover {
+            text-decoration: underline;
+        }
+        
+        .blog-container {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .blog-container img {
+            width: 100%;
+            height: auto;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        .blog-container h1 {
+            color: var(--primary-green);
+            margin-bottom: 10px;
+        }
+
+        .blog-container h3 {
+            color: var(--text-dark);
+            font-weight: normal;
+            margin-bottom: 20px;
+        }
+
+        .blog-container p {
+            margin-bottom: 20px;
+            line-height: 1.7;
+        }
+
+        .comments-section {
+            margin-top: 50px;
+        }
+
+        .comments-section h2 {
+            color: var(--primary-green);
+            margin-bottom: 20px;
+        }
+
+        .comment {
+            background-color: var(--white);
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+
+        .comment-form textarea {
+            width: 100%;
+            padding: 12px 15px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            resize: vertical;
+            font-size: 14px;
+        }
+
+        .comment-form textarea:focus {
+            border-color: var(--primary-green);
+            outline: none;
+        }
+
+        .comment-form button {
+            padding: 12px 20px;
+            background-color: var(--primary-green);
+            color: var(--white);
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .comment-form button:hover {
+            background-color: var(--primary-dark);
+        }
+        
+		.profile-dropdown {
+		    position: relative;
+		    display: inline-block;
+		}
+		
+		.profile-dropdown-content {
+		    display: none;
+		    position: absolute;
+		    right: 0;
+		    background-color: #f9f9f9;
+		    min-width: 160px;
+		    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+		    z-index: 1;
+		}
+		
+		.nav-links .profile-dropdown-content a {
+		    color: var(--primary-green);
+		    padding: 12px 16px;
+		    text-decoration: none;
+		    display: block;
+		}
+		
+		.profile-dropdown-content a:hover {
+		    background-color: #f1f1f1;
+		}
+		
+		.profile-dropdown:hover .profile-dropdown-content {
+		    display: block;
+		}
+		
+		.comment-author {
+		    font-weight: bold;
+		    color: var(--primary-dark);
+		    margin-bottom: 5px;
+		}
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="logo">Blogify</div>
+        <div class="nav-links" id="navLinks">
+    	</div>
+    </nav>
+
+    <div class="blog-container">
+        <img id="blogImage" src="" alt="Blog Image">
+        <h1 id="blogTitle">Blog Title</h1>
+        <h3 id="blogSubtitle">Blog Subtitle</h3>
+        <p id="blogContent">Blog content goes here...</p>
+
+        <div class="comments-section">
+            <h2>Comments</h2>
+            <div id="commentsContainer">
+            </div>
+
+            <div class="comment-form">
+                <textarea id="commentText" placeholder="Write your comment..." required></textarea>
+                <button id="submitComment">Post Comment</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const params = new URLSearchParams(window.location.search);
+        const blogId = params.get("id");
+
+        const blogImage = document.getElementById("blogImage");
+        const blogTitle = document.getElementById("blogTitle");
+        const blogSubtitle = document.getElementById("blogSubtitle");
+        const blogContent = document.getElementById("blogContent");
+        const commentsContainer = document.getElementById("commentsContainer");
+        const commentText = document.getElementById("commentText");
+        const submitComment = document.getElementById("submitComment");
+
+        fetch(`/api/blogs/${blogId}`)
+            .then(res => res.json())
+            .then(blog => {
+                blogImage.src = blog.imageUrl || "https://via.placeholder.com/900x400?text=No+Image";
+                blogTitle.innerText = blog.title;
+                blogSubtitle.innerText = blog.subtitle;
+                blogContent.innerText = blog.content;
+            });
+
+		function loadComments() {
+		    fetch(`/api/blogs/${blogId}/comments`)
+		        .then(res => res.json())
+		        .then(comments => {
+		            commentsContainer.innerHTML = "";
+		            comments.forEach(c => {
+		                const div = document.createElement("div");
+		                div.className = "comment";
+		                div.innerHTML = `
+		                    <div class="comment-author">${c.username}</div>
+		                    <p>${c.commentText}</p>
+		                `;
+		                commentsContainer.appendChild(div);
+		            });
+		        });
+		}
+		
+		loadComments();
+		
+		submitComment.addEventListener("click", () => {
+		    const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+		
+		    if (!currentUser) {
+		        alert("You must be logged in to comment.");
+		        window.location.href = 'login.html';
+		        return;
+		    }
+		
+		    const commentData = {
+		        userId: currentUser.userId,
+		        commentText: commentText.value
+		    };
+		
+		    if (!commentData.commentText.trim()) return alert("Comment cannot be empty");
+		
+		    fetch(`/api/blogs/${blogId}/comments`, {
+		        method: "POST",
+		        headers: { "Content-Type": "application/json" },
+		        body: JSON.stringify(commentData)
+		    })
+		    .then(res => {
+		        if (!res.ok) {
+		            throw new Error("Failed to post comment");
+		        }
+		        return res.text();
+		    })
+		    .then(data => {
+		        console.log(data);
+		        commentText.value = ""; 
+		        loadComments();
+		    })
+		    .catch(err => console.error(err));
+		});
+    </script>
+    <script>
+	    document.addEventListener("DOMContentLoaded", function() {
+	        const navLinks = document.getElementById("navLinks");
+	        const currentUserJSON = localStorage.getItem("currentUser");
+	
+	        let navHTML = `
+	            <a href="index.html">Home</a>
+	            <a href="blogs.html">Blogs</a>
+	            <a href="about.html">About</a>
+	        `;
+	
+	        if (currentUserJSON) {
+	            const user = JSON.parse(currentUserJSON);
+	            navHTML += `
+	                <div class="profile-dropdown">
+	                    <a href="#" class="profile-btn">Profile &#9662;</a>
+	                    <div class="profile-dropdown-content">
+	                        <a href="my_blogs.html">My Blogs</a>
+	                        <a href="write_blog.html">Write</a>
+	                        <a href="#" id="logoutBtn">Logout</a>
+	                    </div>
+	                </div>
+	            `;
+	        } else {
+	            navHTML += `
+	                <a href="login.html">Login</a>
+	                <a href="signup.html">Sign Up</a>
+	            `;
+	        }
+	
+	        navLinks.innerHTML = navHTML;
+	
+	        const logoutBtn = document.getElementById("logoutBtn");
+	        if (logoutBtn) {
+	            logoutBtn.addEventListener("click", function(e) {
+	                e.preventDefault();
+	                localStorage.removeItem("currentUser");
+	                window.location.href = "login.html";
+	            });
+	        }
+	    });
+	</script>
+</body>
+</html>

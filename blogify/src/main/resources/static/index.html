@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Blogify - Home</title>
+    <style>
+        
+        :root {
+            --primary-green: #27ae60;
+            --primary-dark: #1e8449;
+            --secondary-light: #d5f5e3;
+            --white: #ffffff;
+            --gray-light: #f2f2f2;
+            --text-dark: #2c3e50;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--secondary-light);
+            color: var(--text-dark);
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: var(--primary-green);
+            padding: 15px 50px;
+        }
+
+        .navbar .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--white);
+        }
+
+        .navbar .nav-links a {
+            margin: 0 15px;
+            color: var(--white);
+            font-weight: 500;
+        }
+
+        .navbar .nav-links a:hover {
+            text-decoration: underline;
+        }
+
+		.hero {
+		    display: flex;
+		    flex-direction: column;
+		    justify-content: center;
+		    align-items: center;
+		    height: 80vh;
+		    text-align: center;
+		    padding: 0 20px;
+		    position: relative; 
+		    color: var(--white); 
+		    background: linear-gradient(rgba(39, 174, 96, 0.7), rgba(30, 132, 73, 0.7)), url('https://images.pexels.com/photos/192136/pexels-photo-192136.jpeg?cs=srgb&dl=pexels-oleksandr-tiupa-53788-192136.jpg&fm=jpg');
+		    background-size: cover;
+		    background-position: center;
+		}
+		
+		.hero h1 {
+		    font-size: 42px; 
+		    margin-bottom: 15px;
+		    color: var(--white); 
+		}
+		
+		.hero p {
+		    font-size: 18px;
+		    color: var(--white);
+		    max-width: 600px; 
+		}
+
+		.hero-buttons {
+		    margin-top: 30px;
+		    display: flex;
+		    gap: 15px;
+		}
+		
+		.hero-buttons .btn {
+		    padding: 12px 25px;
+		    border-radius: 8px;
+		    font-weight: bold;
+		    font-size: 16px;
+		    text-transform: uppercase;
+		    transition: all 0.3s ease;
+		}
+		
+		.btn.btn-primary {
+		    background-color: var(--white);
+		    color: var(--primary-green);
+		    border: 2px solid var(--white);
+		}
+		
+		.btn.btn-primary:hover {
+		    background-color: transparent;
+		    color: var(--white);
+		}
+		
+		.btn.btn-secondary {
+		    background-color: transparent;
+		    color: var(--white);
+		    border: 2px solid var(--white);
+		}
+		
+		.btn.btn-secondary:hover {
+		    background-color: var(--white);
+		    color: var(--primary-green);
+		}
+
+        .blogs-section {
+            max-width: 1200px;
+            margin: 0 auto 50px auto;
+            padding: 20px 20px;
+        }
+
+        .blogs-section h2 {
+            color: var(--primary-green);
+            margin-bottom: 25px;
+            text-align: center;
+        }
+
+        .blogs-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+        }
+
+        .blog-card {
+            background-color: var(--white);
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .blog-card img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+        }
+
+        .blog-card-content {
+            padding: 15px 20px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .blog-card-content h3 {
+            margin-bottom: 8px;
+            color: var(--primary-green);
+        }
+
+        .blog-card-content p {
+            flex: 1;
+            margin-bottom: 12px;
+        }
+
+        .blog-card-content a {
+            align-self: flex-start;
+            background-color: var(--primary-green);
+            color: var(--white);
+            padding: 8px 15px;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+
+        .blog-card-content a:hover {
+            background-color: var(--primary-dark);
+        }
+
+        footer {
+            background-color: var(--primary-green);
+            color: var(--white);
+            display: flex;
+  			align-items: center;
+  			justify-content: center;
+            padding: 25px 20px;
+        }
+
+        footer .social-icons a {
+            margin: 0 10px;
+            font-size: 20px;
+            color: var(--white);
+        }
+
+        footer .social-icons a:hover {
+            color: var(--gray-light);
+        }
+        	
+		.profile-dropdown {
+		    position: relative;
+		    display: inline-block;
+		}
+
+		.profile-dropdown-content {
+		    display: none;
+		    position: absolute;
+		    right: 0;
+		    background-color: #f9f9f9;
+		    min-width: 160px;
+		    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+		    z-index: 1;
+		}
+
+		.nav-links .profile-dropdown-content a {
+		    color: var(--primary-green);
+		    padding: 12px 16px;
+		    text-decoration: none;
+		    display: block;
+		}
+		
+		.profile-dropdown-content a:hover {
+		    background-color: #f1f1f1;
+		}
+
+		.profile-dropdown:hover .profile-dropdown-content {
+		    display: block;
+		}
+    </style>
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+</head>
+<body>
+
+    <nav class="navbar">
+    	<div class="logo">Blogify</div>
+    	<div class="nav-links" id="navLinks">
+        </div>
+	</nav>
+
+    <section class="hero">
+        <h1>Your Space to Share Ideas and Experiences Openly</h1>
+        <p>A place where we can share our experiences, ideas and inspirations</p>
+        <div class="hero-buttons">
+	        <a href="blogs.html" class="btn btn-primary">Explore Blogs</a>
+	        <a href="write_blog.html" class="btn btn-secondary">Start Writing</a>
+	    </div>
+    </section>
+
+    <section class="blogs-section">
+        <h2>Latest Blogs</h2>
+        <div class="blogs-grid" id="blogsGrid">
+        </div>
+    </section>
+
+    <footer>
+        <p>Made by Ayush & Abhinav in 2025</p>
+        <div class="social-icons">
+            <a href="#"><i class="fab fa-facebook-square"></i></a>
+            <a href="#"><i class="fab fa-twitter-square"></i></a>
+            <a href="#"><i class="fab fa-instagram-square"></i></a>
+            <a href="#"><i class="fab fa-linkedin"></i></a>
+        </div>
+    </footer>
+
+    <script>
+        const blogsGrid = document.getElementById("blogsGrid");
+        fetch("/api/blogs?limit=6")
+        .then(res => res.json())
+        .then(blogs => {
+            blogsGrid.innerHTML = "";
+            blogs.forEach(blog => {
+                const div = document.createElement("div");
+                div.className = "blog-card";
+                div.innerHTML = `
+                    <img src="${blog.imageUrl || 'https://via.placeholder.com/400x180?text=No+Image'}" alt="Blog Image">
+                    <div class="blog-card-content">
+                        <h3>${blog.title}</h3>
+                        <p>${blog.subtitle}</p>
+                        <a href="blog_post.html?id=${blog.blogId}">Read More</a>
+                    </div>
+                `;
+                blogsGrid.appendChild(div);
+            });
+        });
+    </script>
+    <script>
+	    document.addEventListener("DOMContentLoaded", function() {
+	        const navLinks = document.getElementById("navLinks");
+	        const currentUserJSON = localStorage.getItem("currentUser");
+	        let navHTML = `
+	            <a href="index.html">Home</a>
+	            <a href="blogs.html">Blogs</a>
+	            <a href="about.html">About</a>`;
+	
+	        if (currentUserJSON) {
+	            const user = JSON.parse(currentUserJSON);
+	            navHTML += `
+	                <div class="profile-dropdown">
+	                    <a href="#" class="profile-btn">Profile &#9662;</a>
+	                    <div class="profile-dropdown-content">
+	                        <a href="my_blogs.html">My Blogs</a>
+	                        <a href="write_blog.html">Write</a>
+	                        <a href="#" id="logoutBtn">Logout</a>
+	                    </div>
+	                </div>
+	            `;
+	        } else {
+	            navHTML += `
+	                <a href="login.html">Login</a>
+	                <a href="signup.html">Sign Up</a>
+	            `;
+	        }
+	
+	        navLinks.innerHTML = navHTML;
+	        const logoutBtn = document.getElementById("logoutBtn");
+	        if (logoutBtn) {
+	            logoutBtn.addEventListener("click", function(e) {
+	                e.preventDefault();
+	                localStorage.removeItem("currentUser");
+	                window.location.href = "login.html";
+	            });
+	        }
+	    });
+	</script>
+</body>
+</html>

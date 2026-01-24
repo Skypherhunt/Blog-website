@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Blogify - Blogs</title>
+    <style>
+    
+        :root {
+            --primary-green: #27ae60;
+            --primary-dark: #1e8449;
+            --secondary-light: #d5f5e3;
+            --white: #ffffff;
+            --gray-light: #f2f2f2;
+            --text-dark: #2c3e50;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--secondary-light);
+            color: var(--text-dark);
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: var(--primary-green);
+            padding: 15px 50px;
+        }
+
+        .navbar .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--white);
+        }
+
+        .navbar .nav-links a {
+            margin: 0 15px;
+            color: var(--white);
+            font-weight: 500;
+        }
+
+        .navbar .nav-links a:hover {
+            text-decoration: underline;
+        }
+
+        .blogs-container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .blogs-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .blogs-header h2 {
+            color: var(--primary-green);
+        }
+
+        .search-box input {
+            padding: 10px 15px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            width: 250px;
+        }
+
+        .blogs-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+        }
+
+        .blog-card {
+            background-color: var(--white);
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .blog-card img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+        }
+
+        .blog-card-content {
+            padding: 20px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .blog-card-content h3 {
+            margin-bottom: 10px;
+            color: var(--primary-green);
+        }
+
+        .blog-card-content p {
+            flex: 1;
+            margin-bottom: 15px;
+        }
+
+        .blog-card-content a {
+            align-self: flex-start;
+            background-color: var(--primary-green);
+            color: var(--white);
+            padding: 8px 15px;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+
+        .blog-card-content a:hover {
+            background-color: var(--primary-dark);
+        }
+        
+		.profile-dropdown {
+		    position: relative;
+		    display: inline-block;
+		}
+		
+		.profile-dropdown-content {
+		    display: none;
+		    position: absolute;
+		    right: 0;
+		    background-color: #f9f9f9;
+		    min-width: 160px;
+		    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+		    z-index: 1;
+		}
+		
+		.nav-links .profile-dropdown-content a {
+		    color: var(--primary-green);
+		    padding: 12px 16px;
+		    text-decoration: none;
+		    display: block;
+		}
+		
+		.profile-dropdown-content a:hover {
+		    background-color: #f1f1f1;
+		}
+		
+		.profile-dropdown:hover .profile-dropdown-content {
+		    display: block;
+		}
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="logo">Blogify</div>
+        <div class="nav-links" id="navLinks">
+    	</div>
+    </nav>
+
+    <div class="blogs-container">
+        <div class="blogs-header">
+            <h2>All Blogs</h2>
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="Search blogs by title...">
+            </div>
+        </div>
+
+        <div class="blogs-grid" id="blogsGrid">
+        </div>
+    </div>
+
+    <script>
+        const blogsGrid = document.getElementById("blogsGrid");
+        const searchInput = document.getElementById("searchInput");
+
+        function fetchBlogs(query = "") {
+            let url = "/api/blogs";
+            if(query) url += `/search?query=${encodeURIComponent(query)}`;
+
+            fetch(url)
+            .then(response => response.json())
+            .then(blogs => {
+                blogsGrid.innerHTML = "";
+                blogs.forEach(blog => {
+                    const div = document.createElement("div");
+                    div.className = "blog-card";
+                    div.innerHTML = `
+                        <img src="${blog.imageUrl || 'https://via.placeholder.com/400x180?text=No+Image'}" alt="Blog Image">
+                        <div class="blog-card-content">
+                            <h3>${blog.title}</h3>
+                            <p>${blog.subtitle}</p>
+                            <a href="blog_post.html?id=${blog.blogId}">Read More</a>
+                        </div>
+                    `;
+                    blogsGrid.appendChild(div);
+                });
+            });
+        }
+
+        fetchBlogs();
+
+        searchInput.addEventListener("input", () => {
+            const query = searchInput.value.trim();
+            fetchBlogs(query);
+        });
+    </script>
+	<script>
+	    document.addEventListener("DOMContentLoaded", function() {
+	        const navLinks = document.getElementById("navLinks");
+	        const currentUserJSON = localStorage.getItem("currentUser");
+	
+	        let navHTML = `
+	            <a href="index.html">Home</a>
+	            <a href="blogs.html">Blogs</a>
+	            <a href="about.html">About</a>
+	        `;
+	
+	        if (currentUserJSON) {
+	            const user = JSON.parse(currentUserJSON);
+	            navHTML += `
+	                <div class="profile-dropdown">
+	                    <a href="#" class="profile-btn">Profile &#9662;</a>
+	                    <div class="profile-dropdown-content">
+	                        <a href="my_blogs.html">My Blogs</a>
+	                        <a href="write_blog.html">Write</a>
+	                        <a href="#" id="logoutBtn">Logout</a>
+	                    </div>
+	                </div>
+	            `;
+	        } else {
+	            navHTML += `
+	                <a href="login.html">Login</a>
+	                <a href="signup.html">Sign Up</a>
+	            `;
+	        }
+	
+	        navLinks.innerHTML = navHTML;
+	
+	        const logoutBtn = document.getElementById("logoutBtn");
+	        if (logoutBtn) {
+	            logoutBtn.addEventListener("click", function(e) {
+	                e.preventDefault();
+	                localStorage.removeItem("currentUser");
+	                window.location.href = "login.html";
+	            });
+	        }
+	    });
+	</script>
+</body>
+</html>

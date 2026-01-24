@@ -1,0 +1,28 @@
+package com.example.blog.service;
+
+import com.example.blog.model.Post;
+import com.example.blog.repository.PostRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+@Service
+public class PostService {
+
+    @Autowired
+    private PostRepository postRepository;
+
+    // Method to find all posts
+    public List<Post> findAll() {
+        return postRepository.findAllByOrderByCreatedAtDesc();
+    }
+
+    // Method to save a new post
+    public void save(Post post) {
+        // Set the creation timestamp automatically before saving
+        post.setCreatedAt(LocalDateTime.now());
+        postRepository.save(post);
+    }
+}
